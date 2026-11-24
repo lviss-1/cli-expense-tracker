@@ -23,6 +23,7 @@ Make sure ids stay unique after deletions. Think about how to generate them.
 6. Refactor into functions. One function per job (load_expenses, save_expenses, add_expense, etc.), with main() and an if __name__ == "__main__": guard.
 '''
 from datetime import date
+import uuid
 import json
 
 class expense:
@@ -33,7 +34,7 @@ class expense:
         self.category = category
         self.desc = desc
 
-    def to_dict(self):
+    def toDict(self):
         return {
             "id": self.id,
             "current_date": self.current_date,
@@ -43,27 +44,35 @@ class expense:
         }
 
     def __str__(self):
-        return f"{self.desc}"
+        return f"Your {self.desc} expense was added on {self.current_date} and costs: {self.amount}"
 
 class main:
-    expenses = []
+    def generateShortID() -> str:
+        return str(uuid.uuid4())[:6]
+    
+    today = date.today()
+    list_of_expenses = []
+    valid_input = ["exit", '1', '2', '3', '4', '5']
     n = True
     while n:
-        userInput = input("What would you like to do? (1: Add expense 2: View expenses 3: Total By Category 4: Delete Expense 5: type'exit' to quit)")
+        user_input = input("What would you like to do? (1: Add expense 2: View expenses 3: Total By Category 4: Delete Expense 5: type'exit' to quit)")
 
-        if userInput == "1":
-            expense_amount = int(input("How much is the expense?"))
-            expense_category = input("What category of expense is it?")
-            expense_desc = input("Enter a short description of the expense")
-            newExpense = expense(1, date.today(), expense_amount, expense_category, expense_desc)
-            expenses.append(newExpense)
-            print(f"Expense added!")
-        elif userInput == "2":
-            for expense in expenses:
-                print(f"{expense}\n")
-        elif userInput == "3":
+        if user_input == "1":
+            expense_amount = float(input("How much is the expense? "))
+            expense_category = input("What category of expense is it? ")
+            expense_desc = input("Enter a short description of the expense: ")
+            new_expense = expense(generateShortID(), today, expense_amount, expense_category, expense_desc)
+            list_of_expenses.append(new_expense)
+            print("Expense added!")
+            print(new_expense.id)
+        elif user_input == "2":
+            for e in list_of_expenses:
+                print(f"Expense: {e}\n")
+        elif user_input == "3":
             pass
-        elif userInput == "4":
+        elif user_input == "4":
             pass
         else: 
             n = False
+
+main()
